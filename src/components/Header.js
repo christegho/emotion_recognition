@@ -11,10 +11,7 @@ const Header = ({ children }) => (
     </h2>
     <h1 className="my1 h2">Emotion Extractor</h1>
     <p className="m0">
-      Upload a photo and see who’s happy to be there. This demo uses{' '}
-      <a href="https://js.tensorflow.org/">Tensorflow.js</a> and neural networks
-      to detect faces and classify emotions. More details{' '}
-      <a href="https://brendansudol.com/writing/tfjs-emotions">here</a>.
+      Upload a photo to detect your emotion.
     </p>
   </header>
 )

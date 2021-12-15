@@ -7,7 +7,7 @@ import Header from './Header'
 import Message from './Message'
 import Results from './Results'
 
-import sampleImg from '../img/sample.jpg'
+import sampleImg from '../img/sample3.jpg'
 import { FaceFinder } from '../ml/face'
 import { EmotionNet } from '../ml/models'
 import { readFile, nextFrame, drawBox, drawText } from '../util'
