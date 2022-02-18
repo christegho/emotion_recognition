@@ -7,12 +7,11 @@ const fmt = (x, digits = 1) => format(`.${digits}%`)(x)
 
 const Summary = ({ total, happy }) => (
   <Message bg="yellow">
-    <strong>Results:</strong> Of <strong>{total}</strong>{' '}
-    {total > 1 ? 'people' : 'person'} detected,{' '}
+    You are {' '}
     <strong>
-      {happy} ({fmt(happy / total, 0)})
-    </strong>{' '}
-    {happy === 1 ? 'is' : 'are'} happy.
+      {happy} 
+    </strong>{''}
+   !
   </Message>
 )
 
@@ -20,7 +19,7 @@ const Results = ({ faces, emotions }) => (
   <div>
     <Summary
       total={faces.length}
-      happy={emotions.filter(r => r[0].label.emoji === '😄').length}
+      happy={emotions[0][0].label.name}
     />
     <div className="flex flex-wrap mxn1 mt1">
       {faces.map((face, i) => (

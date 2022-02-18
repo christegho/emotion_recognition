@@ -1,5 +1,7 @@
 import debounce from 'lodash.debounce'
-import React, { Component } from 'react'
+import React, { Component, useEffect  } from 'react'
+import Webcam from "react-webcam";
+
 import Dropzone from 'react-dropzone'
 
 import Footer from './Footer'
@@ -12,6 +14,7 @@ import { FaceFinder } from '../ml/face'
 import { EmotionNet } from '../ml/models'
 import { readFile, nextFrame, drawBox, drawText } from '../util'
 
+
 class App extends Component {
   state = {
     ready: false,
@@ -21,7 +24,13 @@ class App extends Component {
     faces: [],
     emotions: [],
   }
+  webcamRef = React.createRef();
 
+    videoConstraints = {
+      width: 540,
+      facingMode: "environment"
+    };
+    
   componentDidMount() {
     this.initModels()
     window.addEventListener('resize', this.handleResize)
@@ -52,7 +61,12 @@ class App extends Component {
     this.clearCanvas()
     this.analyzeFaces()
   }
-
+    
+capturePhoto = () => {
+    this.setState({
+      imgUrl: this.webcamRef.current.getScreenshot()
+    })
+}
   handleResize = debounce(() => this.drawDetections(), 100)
 
   handleUpload = async files => {
@@ -74,8 +88,12 @@ class App extends Component {
 
     // get face bounding boxes and canvases
     const faceResults = await this.models.face.findAndExtractFaces(this.img)
-    const { detections, faces } = faceResults
-
+    let faces = []
+    let detections = []
+    if (faceResults.faces.length > 0){
+        faces = [faceResults.faces[0]]
+        detections = [faceResults.detections[0]]
+    }
     // get emotion predictions
     let emotions = await Promise.all(
       faces.map(async face => await this.models.emotion.classify(face))
@@ -117,10 +135,25 @@ class App extends Component {
     const noFaces = ready && !loading && imgUrl && !faces.length
 
     return (
+        
       <div className="px2 mx-auto container app">
         <Header />
         <main>
+
+
           <div className="py1">
+        
+      <Webcam
+        ref={this.webcamRef}
+        audio={false}
+        screenshotFormat="image/jpeg"
+        videoConstraints={this.videoConstraints}
+      />
+     
+      
+          
+
+    
             <Dropzone
               className="btn btn-small btn-primary btn-upload bg-black h5"
               accept="image/jpeg, image/png"
@@ -130,9 +163,10 @@ class App extends Component {
             >
               Upload image
             </Dropzone>
-          </div>
-          {imgUrl && (
-            <div className="relative">
+ <button className="btn btn-small btn-primary btn-upload bg-black h5" onClick={this.capturePhoto}>Capture</button>
+      {imgUrl && (
+        
+        <div className="relative">
               <img
                 ref={el => (this.img = el)}
                 onLoad={this.handleImgLoaded}
@@ -143,9 +177,11 @@ class App extends Component {
                 ref={el => (this.canvas = el)}
                 className="absolute top-0 left-0"
               />
-            </div>
-          )}
-          {!ready && <Message>Loading machine learning models...</Message>}
+        </div>
+                    
+      )}
+      
+      {!ready && <Message>Loading machine learning models...</Message>}
           {loading && <Message>Analyzing image...</Message>}
           {noFaces && (
             <Message bg="red" color="white">
@@ -154,6 +190,10 @@ class App extends Component {
             </Message>
           )}
           {faces.length > 0 && <Results faces={faces} emotions={emotions} />}
+      
+          </div>
+
+          
         </main>
         <Footer />
       </div>

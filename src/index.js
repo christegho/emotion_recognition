@@ -5,4 +5,4 @@ import 'ace-css/css/ace.min.css'
 import App from './components/App'
 import './index.css'
 
-render(<App />, document.getElementById('root'))
+render( <React.StrictMode> <App /> </React.StrictMode>, document.getElementById('root'))
